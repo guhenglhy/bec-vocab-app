@@ -104,7 +104,9 @@ const App = {
             <div class="${show ? '' : 'flashcard-hidden'}">
               <div class="flashcard-meaning">${word.meaning}</div>
               ${word.derivatives ? `<div class="flashcard-derivatives">📎 ${word.derivatives}</div>` : ''}
-              <div class="flashcard-example">"${word.example}"</div>
+              <div class="flashcard-example">
+                "${word.example}" <button class="audio-btn-sm" id="exampleAudioBtn">🔊</button>
+              </div>
               <div class="flashcard-example-cn">${word.exampleCn}</div>
               ${word.source ? `<div class="flashcard-source">${word.source}</div>` : ''}
             </div>
@@ -140,11 +142,11 @@ const App = {
 
     const card = document.getElementById('flashcard');
     if (card) {
-      card.addEventListener('click', (e) => {
-        if (e.target.closest('.audio-btn')) return;
+      card.addEventListener('click', async (e) => {
+        if (e.target.closest('.audio-btn') || e.target.closest('.audio-btn-sm')) return;
         if (!this.state.showAnswer) {
           this.state.showAnswer = true;
-          this.renderLearn(main());
+          await this.renderLearn(main());
           this.speak(this.state.learnWords[this.state.learnIndex]?.word);
         }
       });
@@ -152,6 +154,12 @@ const App = {
 
     document.getElementById('playAudioBtn')?.addEventListener('click', () => {
       this.speak(this.state.learnWords[this.state.learnIndex]?.word);
+    });
+
+    document.getElementById('exampleAudioBtn')?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const word = this.state.learnWords[this.state.learnIndex];
+      if (word) this.speak(word.example.replace(/—.*$/, '').trim());
     });
 
     document.getElementById('forgetBtn')?.addEventListener('click', async () => {
@@ -211,12 +219,22 @@ const App = {
     const utter = new SpeechSynthesisUtterance(text);
     utter.lang = 'en-US';
     utter.rate = 0.9;
+    utter.volume = 1;
+    if (window.speechSynthesis.paused) {
+      window.speechSynthesis.resume();
+    }
     const voices = window.speechSynthesis.getVoices();
-    const enVoice = voices.find(v => v.lang.startsWith('en') && v.name.includes('Google')) ||
+    if (voices.length > 0) {
+      const enVoice = voices.find(v => v.lang.startsWith('en') && v.name.includes('Google')) ||
                      voices.find(v => v.lang.startsWith('en-US')) ||
                      voices.find(v => v.lang.startsWith('en'));
-    if (enVoice) utter.voice = enVoice;
-    window.speechSynthesis.speak(utter);
+      if (enVoice) utter.voice = enVoice;
+    }
+    try {
+      window.speechSynthesis.speak(utter);
+    } catch (_) {
+      setTimeout(() => { try { window.speechSynthesis.speak(utter); } catch (_) {} }, 50);
+    }
   },
 
   /* ============================================

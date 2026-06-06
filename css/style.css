@@ -369,6 +369,9 @@ button:active { opacity: .8; }
   line-height: 1.6;
   max-width: 100%;
   font-style: italic;
+  display: inline-flex;
+  align-items: flex-start;
+  gap: 6px;
 }
 .flashcard-example-cn {
   font-size: 13px;
@@ -428,6 +431,20 @@ button:active { opacity: .8; }
   transition: background .2s;
 }
 .audio-btn:active { background: var(--primary); color: white; }
+.audio-btn-sm {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--primary-bg);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  flex-shrink: 0;
+  vertical-align: middle;
+  transition: background .2s;
+}
+.audio-btn-sm:active { background: var(--primary); color: white; }
 
 /* ============================================
    View: Quiz
