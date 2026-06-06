@@ -103,8 +103,10 @@ const App = {
             <div class="flashcard-divider"></div>
             <div class="${show ? '' : 'flashcard-hidden'}">
               <div class="flashcard-meaning">${word.meaning}</div>
+              ${word.derivatives ? `<div class="flashcard-derivatives">📎 ${word.derivatives}</div>` : ''}
               <div class="flashcard-example">"${word.example}"</div>
               <div class="flashcard-example-cn">${word.exampleCn}</div>
+              ${word.source ? `<div class="flashcard-source">${word.source}</div>` : ''}
             </div>
             ${!show ? '<div class="flashcard-hint">👆 点击卡片显示释义</div>' : ''}
           </div>
@@ -395,6 +397,7 @@ const App = {
         feedback.innerHTML = `<div class="quiz-feedback ${isCorrect ? 'correct' : 'wrong'}">
           ${isCorrect ? '✅ 回答正确!' : `❌ 正确答案: ${correctAnswer}`}
           <br><small>"${word.example}"</small>
+          ${word.source ? `<br><small style="opacity:.6">${word.source}</small>` : ''}
         </div>
         <button class="btn btn-primary btn-block" id="quizNextBtn" style="margin-top:8px">
           ${this.state.quizIndex < this.state.quizTotal - 1 ? '下一题 →' : '查看结果'}
@@ -602,7 +605,7 @@ const App = {
       <div class="settings-title">设置</div>
       <div class="settings-item">
         <span class="settings-label">词库</span>
-        <span class="settings-action" style="color:var(--text-secondary)">BEC中级 · 160词</span>
+        <span class="settings-action" style="color:var(--text-secondary)">BEC中级 · 280词</span>
       </div>
       <div class="settings-item">
         <button class="settings-action" id="settingsResetBtn">🗑️ 重置所有学习数据</button>
